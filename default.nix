@@ -22,7 +22,7 @@ in
         license = lib.meta.getLicenseFromSpdxId cargoToml.package.license;
       });
     };
-  devTools = pkgs: with pkgs; [ rust-analyzer rustc rustfmt ];
+  devTools = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
   env = { rustPlatform, ... }: {
     RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
   };
