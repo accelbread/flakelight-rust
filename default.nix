@@ -12,13 +12,15 @@ in
     craneLib = inputs'.crane.lib.${prev.system};
     cargoArtifacts = final.craneLib.buildDepsOnly { inherit src; };
   };
-  package = { craneLib, cargoArtifacts, flakelite }:
+  package = { lib, craneLib, cargoArtifacts, flakelite }:
     craneLib.buildPackage {
       inherit src cargoArtifacts;
       doCheck = false;
       meta = flakelite.meta // {
         inherit (cargoToml.package) description;
-      };
+      } // (lib.optionalAttrs (! flakelite.meta ? license) {
+        license = lib.meta.getLicenseFromSpdxId cargoToml.package.license;
+      });
     };
   devTools = pkgs: with pkgs; [ rust-analyzer rustc rustfmt ];
   env = { rustPlatform, ... }: {
