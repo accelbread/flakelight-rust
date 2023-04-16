@@ -16,6 +16,7 @@ localInputs: { src }: {
       meta = flakelite.meta // {
         inherit (cargoToml.package) description;
       } // (lib.optionalAttrs (! flakelite.meta ? license) {
+        # Root license will be needed if Cargo license is a complex expression
         license = lib.meta.getLicenseFromSpdxId cargoToml.package.license;
       });
     };
