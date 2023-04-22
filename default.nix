@@ -4,9 +4,9 @@
 
 localInputs: { src }: {
   inputs = { inherit (localInputs) crane; };
-  withOverlay = final: { flakelite, ... }: {
-    craneLib = flakelite.inputs'.crane.lib;
-    cargoToml = builtins.fromTOML (builtins.readFile (src + "/Cargo.toml"));
+  withOverlay = final: { inputs', ... }: {
+    craneLib = inputs'.crane.lib;
+    cargoToml = builtins.fromTOML (builtins.readFile (src + /Cargo.toml));
     cargoArtifacts = final.craneLib.buildDepsOnly { inherit src; };
   };
   package = { lib, craneLib, cargoToml, cargoArtifacts, flakelite }:
