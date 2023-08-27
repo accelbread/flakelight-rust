@@ -12,5 +12,6 @@
       imports = [ ./flakelight-rust.nix ];
       inputs.crane = lib.mkDefault crane;
     };
+    templates = import ./templates;
   };
 }

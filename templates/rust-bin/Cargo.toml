@@ -1,0 +1,12 @@
+[package]
+name = "hello-world"
+version = "0.0.1"
+authors = ["@NAME@ <@EMAIL@>"]
+edition = "2021"
+description = "Template Rust application."
+repository = "https://@GIT_HOST@/hello-world"
+license = "AGPL-3.0-or-later"
+keywords = ["template"]
+categories = ["command-line-utilities"]
+
+[dependencies]
