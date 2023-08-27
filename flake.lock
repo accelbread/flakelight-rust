@@ -55,21 +55,21 @@
         "type": "github"
       }
     },
-    "flakelite": {
+    "flakelight": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1693114768,
-        "narHash": "sha256-R1czyRUtuy1uozoZqdLQeTNheE1B119yzZbLnnM1ZgY=",
+        "lastModified": 1693115879,
+        "narHash": "sha256-C4ErW8ic9iBtBFlzlv71OAE+mIXHh55hrP9CBnltsxc=",
         "owner": "accelbread",
-        "repo": "flakelite",
-        "rev": "f6c4424f6e82e6009cc5547dc00ecbc43924beb0",
+        "repo": "flakelight",
+        "rev": "981351cfe2fd910fc3513ccfd8ef971cd6802165",
         "type": "github"
       },
       "original": {
         "owner": "accelbread",
-        "repo": "flakelite",
+        "repo": "flakelight",
         "type": "github"
       }
     },
@@ -107,7 +107,7 @@
     "root": {
       "inputs": {
         "crane": "crane",
-        "flakelite": "flakelite"
+        "flakelight": "flakelight"
       }
     },
     "rust-overlay": {

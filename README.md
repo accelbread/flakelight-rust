@@ -1,5 +1,5 @@
-# flakelite-rust
+# flakelight-rust
 
-Rust module for [flakelite][1].
+Rust module for [flakelight][1].
 
-[1]: https://github.com/accelbread/flakelite
+[1]: https://github.com/accelbread/flakelight

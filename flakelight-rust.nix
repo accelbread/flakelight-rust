@@ -1,4 +1,4 @@
-# flakelite-rust -- Rust module for flakelite
+# flakelight-rust -- Rust module for flakelight
 # Copyright (C) 2023 Archit Gupta <archit@accelbread.com>
 # SPDX-License-Identifier: MIT
 
