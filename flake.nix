@@ -8,10 +8,10 @@
     crane.url = "github:ipetkov/crane";
   };
   outputs = { flakelight, crane, ... }: flakelight ./. {
+    imports = [ flakelight.flakelightModules.flakelightModule ];
     flakelightModule = { lib, ... }: {
       imports = [ ./flakelight-rust.nix ];
       inputs.crane = lib.mkDefault crane;
     };
-    templates = import ./templates;
   };
 }

@@ -18,6 +18,17 @@ Configures `rs` files to be formatted with `rustfmt`.
 
 ## Example flake
 
+You can call this flake directly:
+
+```nix
+{
+  inputs.flakelight-rust.url = "github:accelbread/flakelight-rust";
+  outputs = { flakelight-rust, ... }: flakelight-rust ./. { };
+}
+```
+
+Alternatively, add this module to your Flakelight config:
+
 ```nix
 {
   inputs = {
