@@ -8,6 +8,7 @@ let
   inherit (lib) mkDefault;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
+  tomlPackage = cargoToml.package or cargoToml.workspace.package;
 in
 {
   withOverlays = _: { inputs', ... }: rec {
@@ -15,10 +16,10 @@ in
     cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
   };
 
-  description = cargoToml.package.description;
+  description = tomlPackage.description;
 
   # license will need to be set if Cargo license is a complex expression
-  license = mkDefault cargoToml.package.license;
+  license = mkDefault tomlPackage.license;
 
   package = { craneLib, cargoArtifacts, defaultMeta }:
     craneLib.buildPackage {
