@@ -5,7 +5,7 @@
 { lib, src, ... }:
 let
   inherit (builtins) readFile;
-  inherit (lib) mkDefault;
+  inherit (lib) mkDefault mkIf;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
@@ -16,10 +16,10 @@ in
     cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
   };
 
-  description = tomlPackage.description;
+  description = mkIf (tomlPackage ? description) tomlPackage.description;
 
   # license will need to be set if Cargo license is a complex expression
-  license = mkDefault tomlPackage.license;
+  license = mkIf (tomlPackage ? license) (mkDefault tomlPackage.license);
 
   package = { craneLib, cargoArtifacts, defaultMeta }:
     craneLib.buildPackage {
