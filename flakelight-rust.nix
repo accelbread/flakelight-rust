@@ -4,13 +4,13 @@
 
 { lib, src, ... }:
 let
-  inherit (builtins) readFile;
+  inherit (builtins) readFile pathExists;
   inherit (lib) mkDefault mkIf;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
 in
-{
+(lib.mkIf (pathExists (src + /Cargo.toml)) {
   withOverlays = _: { inputs', ... }: rec {
     craneLib = inputs'.crane.lib;
     cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
@@ -28,19 +28,19 @@ in
       meta = defaultMeta;
     };
 
-  devShell = {
-    packages = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
-
-    env = { rustPlatform, ... }: {
-      RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
-    };
-  };
-
   checks = { craneLib, cargoArtifacts, ... }: {
     test = craneLib.cargoTest { inherit src cargoArtifacts; };
     clippy = craneLib.cargoClippy {
       inherit src cargoArtifacts;
       cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+    };
+  };
+}) // {
+  devShell = {
+    packages = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
+
+    env = { rustPlatform, ... }: {
+      RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
     };
   };
 
