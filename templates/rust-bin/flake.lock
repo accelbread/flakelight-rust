@@ -42,11 +42,11 @@
         "flakelight": "flakelight_2"
       },
       "locked": {
-        "lastModified": 1698372189,
-        "narHash": "sha256-40Ek7bPyCQgc/5r5SXYpmRdT13cOyS9Rwn728AVfPTA=",
+        "lastModified": 1698373913,
+        "narHash": "sha256-rlZkU8PRT4yqIDkJJVkJZkbGJ2XbltJAyOJ97/Ho7nM=",
         "owner": "accelbread",
         "repo": "flakelight-rust",
-        "rev": "fc71f50844aff7f9afd9a66bcc734485c6947cc8",
+        "rev": "5e2e3ed28f547e7fd76bc9126251505739586091",
         "type": "github"
       },
       "original": {
