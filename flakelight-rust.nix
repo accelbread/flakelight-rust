@@ -13,7 +13,7 @@ in
 (lib.mkIf (pathExists (src + /Cargo.toml)) {
   withOverlays = _: { inputs', ... }: rec {
     craneLib = inputs'.crane.lib;
-    cargoArtifacts = craneLib.buildDepsOnly { inherit src; };
+    cargoArtifacts = craneLib.buildDepsOnly { inherit src; strictDeps = true; };
   };
 
   description = mkIf (tomlPackage ? description) tomlPackage.description;
@@ -25,6 +25,7 @@ in
     craneLib.buildPackage {
       inherit src cargoArtifacts;
       doCheck = false;
+      strictDeps = true;
       meta = defaultMeta;
     };
 
@@ -32,6 +33,7 @@ in
     test = craneLib.cargoTest { inherit src cargoArtifacts; };
     clippy = craneLib.cargoClippy {
       inherit src cargoArtifacts;
+      strictDeps = true;
       cargoClippyExtraArgs = "--all-targets -- --deny warnings";
     };
   };
