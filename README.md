@@ -16,6 +16,16 @@ Adds checks for crate tests and clippy warnings.
 
 Configures `rs` files to be formatted with `rustfmt`.
 
+## Getting started
+
+To create a new project in an empty directory, run the following:
+
+```
+nix flake init -t github:accelbread/flakelight-rust
+```
+
+Existing projects can use one of the example `flake.nix` files below.
+
 ## Example flake
 
 You can call this flake directly:
