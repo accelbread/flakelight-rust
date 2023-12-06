@@ -49,6 +49,8 @@ mkMerge [
       };
     };
 
-    formatters."*.rs" = "rustfmt";
+    formatters = pkgs: {
+      "*.rs" = "${pkgs.rustfmt}/bin/rustfmt";
+    };
   }
 ]
