@@ -23,11 +23,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1701771034,
-        "narHash": "sha256-2ptyVAjayUdCwslJPY/+mHNeRcqX8UzPA0DZxGrlTdA=",
+        "lastModified": 1701845641,
+        "narHash": "sha256-2LwM9opAcGolMoxIUact6OBwY59mGChfrzdcEuZa9FM=",
         "owner": "accelbread",
         "repo": "flakelight",
-        "rev": "6e832568f0972542c270bdf2aacaef7cd4b04843",
+        "rev": "68a0941bbddcd59f533c1e2b3ef7e0d2ae832712",
         "type": "github"
       },
       "original": {
