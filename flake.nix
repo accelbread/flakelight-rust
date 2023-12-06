@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 {
+  description = "Rust module for flakelite";
   inputs = {
     flakelight.url = "github:accelbread/flakelight";
     crane.url = "github:ipetkov/crane";
