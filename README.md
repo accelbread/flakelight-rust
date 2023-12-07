@@ -16,6 +16,11 @@ Adds checks for crate tests and clippy warnings.
 
 Configures `rs` files to be formatted with `rustfmt`.
 
+## Options
+
+`fileset` configures the fileset the package is built with. To use all files,
+set it to `./.`;
+
 ## Getting started
 
 To create a new project in an empty directory, run the following:

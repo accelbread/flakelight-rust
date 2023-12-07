@@ -2,55 +2,68 @@
 # Copyright (C) 2023 Archit Gupta <archit@accelbread.com>
 # SPDX-License-Identifier: MIT
 
-{ lib, src, ... }:
+{ lib, src, config, flakelight, ... }:
 let
-  inherit (builtins) readFile pathExists;
-  inherit (lib) mkDefault mkIf mkMerge;
+  inherit (builtins) elem readFile pathExists;
+  inherit (lib) mkDefault mkIf mkMerge mkOption;
+  inherit (lib.fileset) fileFilter toSource;
+  inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
 in
-mkMerge [
-  (mkIf (pathExists (src + /Cargo.toml)) {
-    withOverlays = _: { inputs', ... }: rec {
-      craneLib = inputs'.crane.lib;
-      cargoArtifacts = craneLib.buildDepsOnly
-        { inherit src; strictDeps = true; };
-    };
+{
+  options.fileset = mkOption {
+    type = fileset;
+    default = fileFilter
+      (file: file.hasExt "rs" || elem file.name [ "Cargo.toml" "Cargo.lock" ])
+      src;
+  };
 
-    description = mkIf (tomlPackage ? description) tomlPackage.description;
-
-    # license will need to be set if Cargo license is a complex expression
-    license = mkIf (tomlPackage ? license) (mkDefault tomlPackage.license);
-
-    package = { craneLib, cargoArtifacts, defaultMeta }:
-      craneLib.buildPackage {
-        inherit src cargoArtifacts;
-        doCheck = false;
-        strictDeps = true;
-        meta = defaultMeta;
+  config = mkMerge [
+    (mkIf (pathExists (src + /Cargo.toml)) {
+      withOverlays = _: { inputs', ... }: rec {
+        craneLib = inputs'.crane.lib;
+        cargoArtifacts = craneLib.buildDepsOnly
+          { inherit src; strictDeps = true; };
       };
 
-    checks = { craneLib, cargoArtifacts, ... }: {
-      test = craneLib.cargoTest { inherit src cargoArtifacts; };
-      clippy = craneLib.cargoClippy {
-        inherit src cargoArtifacts;
-        strictDeps = true;
-        cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-      };
-    };
-  })
-  {
-    devShell = {
-      packages = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
+      description = mkIf (tomlPackage ? description) tomlPackage.description;
 
-      env = { rustPlatform, ... }: {
-        RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
-      };
-    };
+      # license will need to be set if Cargo license is a complex expression
+      license = mkIf (tomlPackage ? license) (mkDefault tomlPackage.license);
 
-    formatters = pkgs: {
-      "*.rs" = "${pkgs.rustfmt}/bin/rustfmt";
-    };
-  }
-]
+      package = { craneLib, cargoArtifacts, defaultMeta }:
+        craneLib.buildPackage {
+          src = toSource { root = src; inherit (config) fileset; };
+          inherit cargoArtifacts;
+          doCheck = false;
+          strictDeps = true;
+          meta = defaultMeta;
+        };
+
+      checks = { craneLib, cargoArtifacts, ... }: {
+        test = craneLib.cargoTest { inherit src cargoArtifacts; };
+        clippy = craneLib.cargoClippy {
+          inherit src cargoArtifacts;
+          strictDeps = true;
+          cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+        };
+      };
+    })
+
+    {
+      devShell = {
+        packages = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
+
+        env = { rustPlatform, ... }: {
+          RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
+        };
+      };
+
+      formatters = pkgs: {
+        "*.rs" = "${pkgs.rustfmt}/bin/rustfmt";
+      };
+    }
+  ];
+}
