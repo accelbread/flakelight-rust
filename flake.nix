@@ -6,7 +6,10 @@
   description = "Rust module for flakelite";
   inputs = {
     flakelight.url = "github:accelbread/flakelight";
-    crane.url = "github:ipetkov/crane";
+    crane = {
+      url = "github:ipetkov/crane";
+      inputs.nixpkgs.follows = "flakelight/nixpkgs";
+    };
   };
   outputs = { flakelight, crane, ... }: flakelight ./. {
     imports = [ flakelight.flakelightModules.flakelightModule ];
