@@ -22,8 +22,8 @@ in
 
   config = mkMerge [
     (mkIf (pathExists (src + /Cargo.toml)) {
-      withOverlays = _: { inputs', ... }: rec {
-        craneLib = inputs'.crane.lib;
+      withOverlays = final: { inputs, ... }: rec {
+        craneLib = inputs.crane.mkLib final;
         cargoArtifacts = craneLib.buildDepsOnly
           { inherit src; strictDeps = true; };
       };
