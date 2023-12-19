@@ -2,7 +2,7 @@
 
 Rust module for [flakelight][1].
 
-[1]: https://github.com/accelbread/flakelight
+[1]: https://github.com/nix-community/flakelight
 
 ## Configured options
 
@@ -47,7 +47,7 @@ Alternatively, add this module to your Flakelight config:
 ```nix
 {
   inputs = {
-    flakelight.url = "github:accelbread/flakelight";
+    flakelight.url = "github:nix-community/flakelight";
     flakelight-rust.url = "github:accelbread/flakelight-rust";
   };
   outputs = { flakelight, flakelight-rust, ... }: flakelight ./. {
