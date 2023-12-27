@@ -5,13 +5,14 @@
 { lib, src, config, flakelight, ... }:
 let
   inherit (builtins) elem readFile pathExists;
-  inherit (lib) mkDefault mkIf mkMerge mkOption;
+  inherit (lib) mkDefault mkIf mkMerge mkOption warnIf;
   inherit (lib.fileset) fileFilter toSource;
   inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
 in
+warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 {
   options.fileset = mkOption {
     type = fileset;
