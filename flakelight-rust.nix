@@ -34,6 +34,8 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
       # license will need to be set if Cargo license is a complex expression
       license = mkIf (tomlPackage ? license) (mkDefault tomlPackage.license);
 
+      pname = tomlPackage.name;
+
       package = { craneLib, cargoArtifacts, defaultMeta }:
         craneLib.buildPackage {
           src = toSource { root = src; inherit (config) fileset; };
