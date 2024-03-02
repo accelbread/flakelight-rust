@@ -2,6 +2,8 @@
 
 Rust module for [flakelight][1].
 
+Initializes a Rust project flake from its `Cargo.toml`.
+
 [1]: https://github.com/nix-community/flakelight
 
 ## Configured options
