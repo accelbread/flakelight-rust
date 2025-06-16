@@ -12,10 +12,11 @@
     };
   };
   outputs = { flakelight, crane, ... }: flakelight ./. {
-    imports = [ flakelight.flakelightModules.flakelightModule ];
+    imports = [ flakelight.flakelightModules.extendFlakelight ];
     flakelightModule = { lib, ... }: {
       imports = [ ./flakelight-rust.nix ];
       inputs.crane = lib.mkDefault crane;
     };
+    templates = import ./templates;
   };
 }
