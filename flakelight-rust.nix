@@ -74,7 +74,13 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 
     {
       devShell = {
-        packages = pkgs: with pkgs; [ rust-analyzer cargo clippy rustc rustfmt ];
+        packages = pkgs: with pkgs; [
+          rust-analyzer-unwrapped
+          cargo
+          clippy
+          rustc
+          rustfmt
+        ];
 
         env = { rustPlatform, ... }: {
           RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
