@@ -23,11 +23,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 
   config = mkMerge [
     (mkIf (pathExists (src + /Cargo.toml)) {
-      withOverlays = final: { inputs, ... }: rec {
-        craneLib = inputs.crane.mkLib final;
-        cargoArtifacts = craneLib.buildDepsOnly
-          { inherit src; strictDeps = true; };
-      };
+      withOverlays = [ config.inputs.naersk.overlays.default ];
 
       description = mkIf (tomlPackage ? description) tomlPackage.description;
 
@@ -36,21 +32,26 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 
       pname = tomlPackage.name;
 
-      package = { craneLib, cargoArtifacts, defaultMeta }:
-        craneLib.buildPackage {
+      package = { naersk, defaultMeta }:
+        naersk.buildPackage {
           src = toSource { root = src; inherit (config) fileset; };
-          inherit cargoArtifacts;
-          doCheck = false;
           strictDeps = true;
           meta = defaultMeta;
         };
 
-      checks = { craneLib, cargoArtifacts, ... }: {
-        test = craneLib.cargoTest { inherit src cargoArtifacts; };
-        clippy = craneLib.cargoClippy {
-          inherit src cargoArtifacts;
+      checks = { naersk, ... }: {
+        test = naersk.buildPackage {
+          mode = "test";
+          name = "test-${tomlPackage.name}";
+          inherit src;
           strictDeps = true;
-          cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+        };
+        clippy = naersk.buildPackage {
+          mode = "clippy";
+          name = "clippy-${tomlPackage.name}";
+          inherit src;
+          cargoBuildOptions = default: default ++ [ "--all-targets" ];
+          strictDeps = true;
         };
       };
     })

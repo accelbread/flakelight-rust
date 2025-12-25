@@ -6,13 +6,13 @@
   description = "Rust module for flakelite";
   inputs = {
     flakelight.url = "github:nix-community/flakelight";
-    crane.url = "github:ipetkov/crane";
+    naersk.url = "github:nix-community/naersk";
   };
-  outputs = { flakelight, crane, ... }: flakelight ./. {
+  outputs = { flakelight, naersk, ... }: flakelight ./. {
     imports = [ flakelight.flakelightModules.extendFlakelight ];
     flakelightModule = { lib, ... }: {
       imports = [ ./flakelight-rust.nix ];
-      inputs.crane = lib.mkDefault crane;
+      inputs.naersk = lib.mkDefault naersk;
     };
     templates = import ./templates;
   };
