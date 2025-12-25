@@ -4,13 +4,24 @@
 
 { lib, src, config, flakelight, ... }:
 let
-  inherit (builtins) elem readFile pathExists;
+  inherit (builtins) elem isBool readFile pathExists;
   inherit (lib) mkDefault mkIf mkMerge mkOption warnIf;
-  inherit (lib.fileset) fileFilter toSource;
+  inherit (lib.fileset) fileFilter toSource unions;
   inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
+
+  readme =
+    if cargoToml ? readme then
+      if isBool cargoToml.readme then
+        if cargoToml.readme then "README.md" else null
+      else cargoToml.readme
+    else
+      if (pathExists (src + /README.md)) then "README.md"
+      else if (pathExists (src + /README.txt)) then "README.txt"
+      else if (pathExists (src + /README)) then "README"
+      else null;
 in
 warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 {
@@ -43,13 +54,18 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
         test = naersk.buildPackage {
           mode = "test";
           name = "test-${tomlPackage.name}";
-          inherit src;
+          src = toSource { root = src; inherit (config) fileset; };
           strictDeps = true;
         };
         clippy = naersk.buildPackage {
           mode = "clippy";
           name = "clippy-${tomlPackage.name}";
-          inherit src;
+          src = toSource {
+            root = src;
+            fileset =
+              if readme == null then config.fileset
+              else unions [ config.fileset (src + "/${readme}") ];
+          };
           cargoBuildOptions = default: default ++ [ "--all-targets" ];
           strictDeps = true;
         };
