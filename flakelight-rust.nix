@@ -5,7 +5,8 @@
 { lib, src, config, flakelight, ... }:
 let
   inherit (builtins) elem isBool readFile pathExists;
-  inherit (lib) mkDefault mkIf mkMerge mkOption warnIf;
+  inherit (lib) mkDefault mkEnableOption mkIf mkMerge mkOption optionalAttrs
+    warnIf;
   inherit (lib.fileset) fileFilter toSource unions;
   inherit (flakelight.types) fileset;
 
@@ -22,14 +23,23 @@ let
       else if (pathExists (src + /README.txt)) then "README.txt"
       else if (pathExists (src + /README)) then "README"
       else null;
+
+  env = optionalAttrs config.rust.enable_unstable {
+    RUSTC_BOOTSTRAP = "1";
+  };
 in
 warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 {
-  options.fileset = mkOption {
-    type = fileset;
-    default = fileFilter
-      (file: file.hasExt "rs" || elem file.name [ "Cargo.toml" "Cargo.lock" ])
-      src;
+  options = {
+    fileset = mkOption {
+      type = fileset;
+      default = fileFilter
+        (file: file.hasExt "rs" || elem file.name [ "Cargo.toml" "Cargo.lock" ])
+        src;
+    };
+
+    rust.enable_unstable = mkEnableOption
+      "using unstable features with stable compiler";
   };
 
   config = mkMerge [
@@ -46,6 +56,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
       package = { naersk, defaultMeta }:
         naersk.buildPackage {
           src = toSource { root = src; inherit (config) fileset; };
+          inherit env;
           strictDeps = true;
           meta = defaultMeta;
         };
@@ -55,6 +66,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           mode = "test";
           name = "test-${tomlPackage.name}";
           src = toSource { root = src; inherit (config) fileset; };
+          inherit env;
           strictDeps = true;
         };
         clippy = naersk.buildPackage {
@@ -67,6 +79,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
               else unions [ config.fileset (src + "/${readme}") ];
           };
           cargoBuildOptions = default: default ++ [ "--all-targets" ];
+          inherit env;
           strictDeps = true;
         };
       };
@@ -82,7 +95,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           rustfmt
         ];
 
-        env = { rustPlatform, ... }: {
+        env = { rustPlatform, ... }: env // {
           RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
         };
       };

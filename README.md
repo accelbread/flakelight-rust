@@ -23,6 +23,9 @@ Configures `rs` files to be formatted with `rustfmt`.
 `fileset` configures the fileset the package is built with. To use all files,
 set it to `./.`;
 
+`rust.enable_unstable` enables usage of unstable features with stable compilers,
+by setting `RUSTC_BOOTSTRAP` in the devShell and derivations.
+
 ## Getting started
 
 To create a new project in an empty directory, run the following:
