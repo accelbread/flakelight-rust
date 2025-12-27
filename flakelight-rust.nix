@@ -7,7 +7,7 @@ let
   inherit (builtins) elem isBool readFile pathExists;
   inherit (lib) mkDefault mkEnableOption mkIf mkMerge mkOption optionalAttrs
     warnIf;
-  inherit (lib.fileset) fileFilter toSource unions;
+  inherit (lib.fileset) fileFilter maybeMissing toSource unions;
   inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
@@ -33,9 +33,11 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
   options = {
     fileset = mkOption {
       type = fileset;
-      default = fileFilter
-        (file: file.hasExt "rs" || elem file.name [ "Cargo.toml" "Cargo.lock" ])
-        src;
+      default = unions [
+        (fileFilter (file: file.hasExt "rs" || file.name == "Cargo.toml") src)
+        (src + /Cargo.lock)
+        (maybeMissing (src + /.cargo/config.toml))
+      ];
     };
 
     rust.enable_unstable = mkEnableOption
