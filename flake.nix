@@ -10,10 +10,10 @@
   };
   outputs = { flakelight, naersk, ... }: flakelight ./. {
     imports = [ flakelight.flakelightModules.extendFlakelight ];
+    nixDir = ./.;
     flakelightModule = { lib, ... }: {
       imports = [ ./flakelight-rust.nix ];
       inputs.naersk = lib.mkDefault naersk;
     };
-    templates = import ./templates;
   };
 }
