@@ -26,6 +26,10 @@ set it to `./.`;
 `rust.enable_unstable` enables usage of unstable features with stable compilers,
 by setting `RUSTC_BOOTSTRAP` in the devShell and derivations.
 
+`rust.enable_miri` adds `cargo-miri` to the devShell and adds a check for
+`cargo miri test`. The `cargo-miri` package is provided by
+`flakelight-rust.overlays.default`.
+
 ## Getting started
 
 To create a new project in an empty directory, run the following:
