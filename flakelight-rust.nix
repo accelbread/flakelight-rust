@@ -11,7 +11,7 @@ let
   inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
-  tomlPackage = cargoToml.package or cargoToml.workspace.package;
+  tomlPackage = cargoToml.package or cargoToml.workspace.package or { };
 
   readme =
     if tomlPackage ? readme then
@@ -57,7 +57,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
       # license will need to be set if Cargo license is a complex expression
       license = mkIf (tomlPackage ? license) (mkDefault tomlPackage.license);
 
-      pname = tomlPackage.name;
+      pname = tomlPackage.name or (mkDefault "cargo-workspace");
 
       package = { naersk, defaultMeta }:
         naersk.buildPackage {
@@ -70,14 +70,14 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
       checks = { naersk, ... }: {
         test = naersk.buildPackage {
           mode = "test";
-          name = "test-${tomlPackage.name}";
+          name = "test-${config.pname}";
           src = toSource { root = src; inherit (config) fileset; };
           inherit env;
           strictDeps = true;
         };
         clippy = naersk.buildPackage {
           mode = "clippy";
-          name = "clippy-${tomlPackage.name}";
+          name = "clippy-${config.pname}";
           src = toSource {
             root = src;
             fileset =
@@ -95,7 +95,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
       checks = { naersk, cargo-miri, ... }: {
         miri-test = naersk.buildPackage {
           mode = "test";
-          name = "miri-test-${tomlPackage.name}";
+          name = "miri-test-${config.pname}";
           src = toSource { root = src; inherit (config) fileset; };
           inherit env;
           strictDeps = true;
