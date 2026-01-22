@@ -14,10 +14,10 @@ let
   tomlPackage = cargoToml.package or cargoToml.workspace.package;
 
   readme =
-    if cargoToml ? readme then
-      if isBool cargoToml.readme then
-        if cargoToml.readme then "README.md" else null
-      else cargoToml.readme
+    if tomlPackage ? readme then
+      if isBool tomlPackage.readme then
+        if tomlPackage.readme then "README.md" else null
+      else tomlPackage.readme
     else
       if (pathExists (src + /README.md)) then "README.md"
       else if (pathExists (src + /README.txt)) then "README.txt"
