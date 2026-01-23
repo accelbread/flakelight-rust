@@ -98,6 +98,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           name = "miri-test-${config.pname}";
           src = toSource { root = src; inherit (config) fileset; };
           inherit env;
+          release = false;
           strictDeps = true;
           overrideMain = old: {
             nativeBuildInputs = old.nativeBuildInputs ++ [ cargo-miri ];
