@@ -74,6 +74,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           src = toSource { root = src; inherit (config) fileset; };
           inherit env;
           strictDeps = true;
+          allowSubstitutes = false;
         };
         clippy = naersk.buildPackage {
           mode = "clippy";
@@ -87,6 +88,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           cargoBuildOptions = default: default ++ [ "--all-targets" ];
           inherit env;
           strictDeps = true;
+          allowSubstitutes = false;
         };
       };
     })
@@ -100,6 +102,7 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           inherit env;
           release = false;
           strictDeps = true;
+          allowSubstitutes = false;
           overrideMain = old: {
             nativeBuildInputs = old.nativeBuildInputs ++ [ cargo-miri ];
             preBuild = ''
