@@ -8,12 +8,18 @@
     flakelight.url = "github:nix-community/flakelight";
     naersk.url = "github:nix-community/naersk";
   };
-  outputs = { flakelight, naersk, ... }: flakelight ./. {
-    imports = [ flakelight.flakelightModules.extendFlakelight ];
-    nixDir = ./.;
-    flakelightModule = { lib, ... }: {
-      imports = [ ./flakelight-rust.nix ];
-      inputs.naersk = lib.mkDefault naersk;
+  outputs =
+    { flakelight, naersk, ... }:
+    flakelight ./. {
+      imports = [ flakelight.flakelightModules.extendFlakelight ];
+      nixDir = ./.;
+      flakelightModule = { lib, ... }: {
+        imports = [ ./flakelight-rust.nix ];
+        inputs.naersk = lib.mkDefault naersk;
+      };
+      formatters = { pkgs, lib, ... }: {
+        "*.nix" = "${lib.getExe pkgs.nixfmt} -w78";
+        "*.md" = "${lib.getExe pkgs.mdformat} --wrap 80";
+      };
     };
-  };
 }

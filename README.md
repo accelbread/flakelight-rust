@@ -4,8 +4,6 @@ Rust module for [flakelight][1].
 
 Initializes a Rust project flake from its `Cargo.toml`.
 
-[1]: https://github.com/nix-community/flakelight
-
 ## Configured options
 
 Sets `package` to the crate at the flake source. `description` and `licence` is
@@ -64,3 +62,5 @@ Alternatively, add this module to your Flakelight config:
   };
 }
 ```
+
+[1]: https://github.com/nix-community/flakelight

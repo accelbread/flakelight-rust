@@ -2,10 +2,11 @@
 # Copyright (C) 2023 Archit Gupta <archit@accelbread.com>
 # SPDX-License-Identifier: MIT
 
-{ rustc
-, rustPlatform
-, llvm
-, stdenvNoCC
+{
+  rustc,
+  rustPlatform,
+  llvm,
+  stdenvNoCC,
 }:
 let
   target = stdenvNoCC.hostPlatform.rust.rustcTarget;

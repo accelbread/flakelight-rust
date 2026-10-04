@@ -2,11 +2,12 @@
 # Copyright (C) 2023 Archit Gupta <archit@accelbread.com>
 # SPDX-License-Identifier: MIT
 
-{ stdenv
-, rustPlatform
-, rustc
-, miri
-, makeWrapper
+{
+  stdenv,
+  rustPlatform,
+  rustc,
+  miri,
+  makeWrapper,
 }:
 let
   target = stdenv.hostPlatform.rust.rustcTarget;
@@ -18,7 +19,10 @@ rustPlatform.buildRustPackage {
   cargoVendorDir = "../../../../vendor";
   RUSTC_BOOTSTRAP = "1";
   nativeBuildInputs = [ makeWrapper ];
-  outputs = [ "out" "sysroot" ];
+  outputs = [
+    "out"
+    "sysroot"
+  ];
   postBuild = ''
     export MIRI="${miri}/bin/miri"
     export MIRI_LIB_SRC="${rustPlatform.rustcSrc}/library"

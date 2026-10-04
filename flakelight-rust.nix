@@ -2,12 +2,36 @@
 # Copyright (C) 2023 Archit Gupta <archit@accelbread.com>
 # SPDX-License-Identifier: MIT
 
-{ lib, src, config, flakelight, inputs, ... }:
+{
+  lib,
+  src,
+  config,
+  flakelight,
+  inputs,
+  ...
+}:
 let
-  inherit (builtins) elem isBool readFile pathExists;
-  inherit (lib) mkDefault mkEnableOption mkIf mkMerge mkOption optionalAttrs
-    warnIf;
-  inherit (lib.fileset) fileFilter maybeMissing toSource unions;
+  inherit (builtins)
+    elem
+    isBool
+    readFile
+    pathExists
+    ;
+  inherit (lib)
+    mkDefault
+    mkEnableOption
+    mkIf
+    mkMerge
+    mkOption
+    optionalAttrs
+    warnIf
+    ;
+  inherit (lib.fileset)
+    fileFilter
+    maybeMissing
+    toSource
+    unions
+    ;
   inherit (flakelight.types) fileset;
 
   cargoToml = fromTOML (readFile (src + /Cargo.toml));
@@ -17,19 +41,22 @@ let
     if tomlPackage ? readme then
       if isBool tomlPackage.readme then
         if tomlPackage.readme then "README.md" else null
-      else tomlPackage.readme
+      else
+        tomlPackage.readme
+    else if (pathExists (src + /README.md)) then
+      "README.md"
+    else if (pathExists (src + /README.txt)) then
+      "README.txt"
+    else if (pathExists (src + /README)) then
+      "README"
     else
-      if (pathExists (src + /README.md)) then "README.md"
-      else if (pathExists (src + /README.txt)) then "README.txt"
-      else if (pathExists (src + /README)) then "README"
-      else null;
+      null;
 
   env = optionalAttrs config.rust.enable_unstable {
     RUSTC_BOOTSTRAP = "1";
   };
 in
-warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
-{
+warnIf (!builtins ? readFileType) "Unsupported Nix version in use." {
   options = {
     fileset = mkOption {
       type = fileset;
@@ -41,10 +68,8 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
     };
 
     rust = {
-      enable_unstable = mkEnableOption
-        "using unstable features with stable compiler";
-      enable_miri = mkEnableOption
-        "using cargo-miri";
+      enable_unstable = mkEnableOption "using unstable features with stable compiler";
+      enable_miri = mkEnableOption "using cargo-miri";
     };
   };
 
@@ -59,9 +84,13 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 
       pname = tomlPackage.name or (mkDefault "cargo-workspace");
 
-      package = { naersk, defaultMeta }:
+      package =
+        { naersk, defaultMeta }:
         naersk.buildPackage {
-          src = toSource { root = src; inherit (config) fileset; };
+          src = toSource {
+            root = src;
+            inherit (config) fileset;
+          };
           inherit env;
           strictDeps = true;
           meta = defaultMeta;
@@ -71,7 +100,10 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
         test = naersk.buildPackage {
           mode = "test";
           name = "test-${config.pname}";
-          src = toSource { root = src; inherit (config) fileset; };
+          src = toSource {
+            root = src;
+            inherit (config) fileset;
+          };
           inherit env;
           strictDeps = true;
           allowSubstitutes = false;
@@ -82,8 +114,13 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
           src = toSource {
             root = src;
             fileset =
-              if readme == null then config.fileset
-              else unions [ config.fileset (src + "/${readme}") ];
+              if readme == null then
+                config.fileset
+              else
+                unions [
+                  config.fileset
+                  (src + "/${readme}")
+                ];
           };
           cargoBuildOptions = default: default ++ [ "--all-targets" ];
           inherit env;
@@ -98,7 +135,10 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
         miri-test = naersk.buildPackage {
           mode = "test";
           name = "miri-test-${config.pname}";
-          src = toSource { root = src; inherit (config) fileset; };
+          src = toSource {
+            root = src;
+            inherit (config) fileset;
+          };
           inherit env;
           release = false;
           strictDeps = true;
@@ -115,17 +155,21 @@ warnIf (! builtins ? readFileType) "Unsupported Nix version in use."
 
     {
       devShell = {
-        packages = pkgs: with pkgs; [
-          rust-analyzer-unwrapped
-          cargo
-          clippy
-          rustc
-          rustfmt
-        ];
+        packages =
+          pkgs: with pkgs; [
+            rust-analyzer-unwrapped
+            cargo
+            clippy
+            rustc
+            rustfmt
+          ];
 
-        env = { rustPlatform, ... }: env // {
-          RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
-        };
+        env =
+          { rustPlatform, ... }:
+          env
+          // {
+            RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
+          };
       };
 
       formatters = pkgs: {
