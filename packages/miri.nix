@@ -5,7 +5,6 @@
 {
   rustc,
   rustPlatform,
-  llvm,
   stdenvNoCC,
 }:
 let
@@ -17,7 +16,7 @@ rustPlatform.buildRustPackage {
   sourceRoot = "rustc-${rustc.version}-src/src/tools/miri";
   cargoVendorDir = "../../../vendor";
   RUSTC_BOOTSTRAP = "1";
-  buildInputs = [ llvm ];
+  buildInputs = [ rustc.llvmPackages.llvm ];
   dontCargoCheck = true;
   installPhase = ''
     mkdir -p $out/bin
